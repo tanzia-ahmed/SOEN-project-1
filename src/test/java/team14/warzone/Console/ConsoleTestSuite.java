@@ -5,10 +5,13 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        CommandTest.class,
+        AdminCommandsTest.class,
         InputValidatorTest.class
 })
 
+/**
+ * Test Suite for Console
+ */
 public class ConsoleTestSuite {
 //place holder
 

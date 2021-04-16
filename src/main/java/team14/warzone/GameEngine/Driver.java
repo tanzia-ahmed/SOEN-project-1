@@ -1,8 +1,8 @@
 package team14.warzone.GameEngine;
 
 import team14.warzone.Console.Console;
-import team14.warzone.Console.InputValidator;
-import team14.warzone.MapModule.MapEditor;
+import team14.warzone.MapModule.AdapterMapEditor;
+import team14.warzone.MapModule.MapEditorConquest;
 
 /**
  * This is a driver class for the game engine
@@ -15,16 +15,12 @@ public class Driver {
      */
     public static void main(String[] args) {
         Console l_Console = new Console();
-        MapEditor l_ME = new MapEditor();
+        AdapterMapEditor l_ME = new AdapterMapEditor(new MapEditorConquest());
         GameEngine l_GE = new GameEngine(l_Console, l_ME);
 
-        System.out.println("Welcome to warzone game, please enter your command : ");
-        while (InputValidator.CURRENT_PHASE != InputValidator.Phase.GAMEPLAY) {
-            l_Console.readInput();
-            l_Console.filterCommand(l_GE, l_ME);
-        }
-        while (true) {
-            l_GE.gameLoop();
-        }
+        System.out.println("Welcome to warzone game!");
+        l_GE.getD_LogEntryBuffer().setD_log("Warzone game has started");
+        l_GE.getD_LogEntryBuffer().notifyObservers(l_GE.getD_LogEntryBuffer());
+        l_GE.gameLoop();
     }
 }

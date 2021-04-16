@@ -2,15 +2,17 @@ package team14.warzone.MapModule;
 
 import team14.warzone.GameEngine.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * This class consists the information about the continent
+ *
  * @author razashaik
  * @version 1.0
-*/
+ */
 
-public class Continent {
+public class Continent implements Serializable {
 
     /**
      * Unique integer ID of continent
@@ -24,17 +26,20 @@ public class Continent {
      * Control Value of continent
      */
     private int d_ControlValue;
+
     /**
      * Arraylist containing a record of owners
      */
     private ArrayList<Player> d_CurrentOwners;
+
     /**
      * Constructor for Continent
+     *
      * @param p_ContinentIntID unique integer ID
-     * @param p_ContinentID unique ID (name)
-     * @param p_ControlValue control value
+     * @param p_ContinentID    unique ID (name)
+     * @param p_ControlValue   control value
      */
-    public Continent(int p_ContinentIntID, String p_ContinentID, int p_ControlValue){
+    public Continent(int p_ContinentIntID, String p_ContinentID, int p_ControlValue) {
         this.d_ContinentIntID = p_ContinentIntID;
         this.d_ContinentID = p_ContinentID;
         this.d_ControlValue = p_ControlValue;
@@ -42,6 +47,7 @@ public class Continent {
 
     /**
      * Returns the integer ID
+     *
      * @return An int with ID
      */
     public int getD_ContinentIntID() {
@@ -50,6 +56,7 @@ public class Continent {
 
     /**
      * Sets the integer ID
+     *
      * @param p_ContinentIntID String with ID
      */
     public void setD_ContinentIntID(int p_ContinentIntID) {
@@ -58,6 +65,7 @@ public class Continent {
 
     /**
      * Returns the ID name
+     *
      * @return A String with ID
      */
     public String getD_ContinentID() {
@@ -66,6 +74,7 @@ public class Continent {
 
     /**
      * Sets the ID name
+     *
      * @param p_ContinentID String with ID
      */
     public void setD_ContinentID(String p_ContinentID) {
@@ -74,6 +83,7 @@ public class Continent {
 
     /**
      * Returns the control value
+     *
      * @return An int with control value
      */
     public int getD_ControlValue() {
@@ -82,6 +92,7 @@ public class Continent {
 
     /**
      * Sets the control value
+     *
      * @param p_ControlValue int with control value
      */
     public void setD_ControlValue(int p_ControlValue) {
@@ -89,16 +100,25 @@ public class Continent {
     }
 
     /**
-     * Prints the continent
-     * @return Continent type with all attributes
+     * Getter
+     * @return current owner
      */
-    public String printContinent() {
-        return String.format("%d %s %d",this.d_ContinentIntID,  this.d_ContinentID, this.d_ControlValue);
+    public ArrayList<Player> getD_CurrentOwners() {
+        return d_CurrentOwners;
     }
 
 
-    
-    /** 
+    /**
+     * Prints the continent
+     *
+     * @return Continent type with all attributes
+     */
+    public String printContinent() {
+        return String.format("%d %s %d", this.d_ContinentIntID, this.d_ContinentID, this.d_ControlValue);
+    }
+
+
+    /**
      * @return String
      */
     @Override
