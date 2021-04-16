@@ -1,6 +1,7 @@
 package team14.warzone.MapModule;
 
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -12,7 +13,7 @@ import java.util.Iterator;
  * @version 1.0
  */
 
-public class Map {
+public class Map implements Serializable {
 
     /**
      * Array List of Continents defined in our map
@@ -85,16 +86,16 @@ public class Map {
         }
         Country l_Country = new Country(l_CountryIntID, p_CountryID, p_ContinentID, "", 0);
 
-        for (int l_CountryIndex = 0; l_CountryIndex < d_Countries.size(); l_CountryIndex++) {
-            if (d_Countries.get(l_CountryIndex).getD_CountryID() == p_CountryID) {
+        for (Country d_country : d_Countries) {
+            if (d_country.getD_CountryID().equals(p_CountryID)) {
                 System.out.println("Country already exists");
                 return;
             }
         }
 
         boolean l_Invalid = false;
-        for (int l_ContIndex = 0; l_ContIndex < d_Continents.size(); l_ContIndex++) {
-            if (d_Continents.get(l_ContIndex).getD_ContinentID().equals(p_ContinentID)) {
+        for (Continent d_continent : d_Continents) {
+            if (d_continent.getD_ContinentID().equals(p_ContinentID)) {
                 d_Countries.add(l_Country);
                 l_Invalid = true;
                 break;
@@ -260,7 +261,7 @@ public class Map {
      * @return String country name
      */
     public Country findCountry(String p_CountryName){
-
+        //replace "-" with space in country name
         for (Country l_CountryIndex: d_Countries) {
             if(l_CountryIndex.getD_CountryID().equals(p_CountryName))
             {

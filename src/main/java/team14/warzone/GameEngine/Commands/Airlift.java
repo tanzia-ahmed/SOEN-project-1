@@ -7,6 +7,11 @@ import team14.warzone.GameEngine.Player;
 import team14.warzone.MapModule.Country;
 import team14.warzone.MapModule.Map;
 
+/**
+ * This class is used to create airlift order
+ *
+ * @author zeina
+ */
 public class Airlift extends Order {
     /**
      * A field to store source country name
@@ -42,7 +47,8 @@ public class Airlift extends Order {
     public void execute() throws Exception {
         Player l_CurrentPlayer = d_GameEngine.getD_CurrentPlayer();
         //check if player has the Airlift card
-        if (l_CurrentPlayer.hasCard(new Card("Airlift"))) {
+        Card l_CardAirlift = new Card("airlift");
+        if (l_CurrentPlayer.hasCard(l_CardAirlift)) {
             Map l_LoadedMap = d_GameEngine.getD_LoadedMap();
 
             // check if source country exists
@@ -62,21 +68,33 @@ public class Airlift extends Order {
             }
             // check if destination country is owned by the player
             if (!l_CurrentPlayer.getD_CountriesOwned().contains(l_CountryTo)) {
+                //player will lose armies if airlifted to a country he doesn't own
+                l_CurrentPlayer.setD_TotalNumberOfArmies(l_CurrentPlayer.getD_TotalNumberOfArmies() - d_NumberOfArmies);
                 throw new Exception("Airlift failed: " + l_CurrentPlayer.getD_Name() + " does not own " +
                         l_CountryTo.getD_CountryID());
             }
             // check if destination country is owned by the player, then move armies to the destination country
             else {
-                // decrease armies in source country
-                l_CountryTo.setD_NumberOfArmies(l_CountryTo.getD_NumberOfArmies() - d_NumberOfArmies);
                 // increase armies in destination country
-                l_CountryFrom.setD_NumberOfArmies(l_CountryFrom.getD_NumberOfArmies() + d_NumberOfArmies);
+                l_CountryTo.setD_NumberOfArmies(l_CountryTo.getD_NumberOfArmies() + d_NumberOfArmies);
+                // decrease armies in source country
+                l_CountryFrom.setD_NumberOfArmies(l_CountryFrom.getD_NumberOfArmies() - d_NumberOfArmies);
+                l_CurrentPlayer.removeCard(new Card("airlift"));
                 Console.displayMsg("Success: " + l_CurrentPlayer.getD_Name() + " airlifted " + d_NumberOfArmies + " armies" +
                         " from " + d_CountryNameFrom + " to " + d_CountryNameTo);
+                d_GameEngine.getD_LogEntryBuffer().setD_log("Success: " + l_CurrentPlayer.getD_Name() + " airlifted " + d_NumberOfArmies + " armies" +
+                        " from " + d_CountryNameFrom + " to " + d_CountryNameTo);
+                d_GameEngine.getD_LogEntryBuffer().notifyObservers(d_GameEngine.getD_LogEntryBuffer());
             }
         } else {
             Console.displayMsg("Player " + l_CurrentPlayer.getD_Name() + " can not perform airlifting, " +
                     "since he does not own an Airlift card");
+
         }
+    }
+
+    @Override
+    public void reset() {
+
     }
 }

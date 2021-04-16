@@ -4,31 +4,40 @@ package team14.warzone.MapModule;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.Test;
+
 import java.io.FileNotFoundException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test the MapEditor class
+ */
 public class TestMapEditor {
 
-    public static MapEditor d_MapEditor;
+    /**
+     * static mapeditor
+     */
+    public static MapEditorDomination d_MapEditor;
 
-
-    
     /** 
-     * @throws FileNotFoundException
+     * Initialize before tests run
+     * @throws FileNotFoundException throws a filenotfoundexception
      */
     @BeforeClass
     public static void init() throws FileNotFoundException {
 
-        d_MapEditor = new MapEditor();
-        d_MapEditor.loadMap("europass.map");
+        d_MapEditor = new AdapterMapEditor(new MapEditorConquest());
+        d_MapEditor.loadMapDomination("europass.map");
     }
 
+    /**
+     * tests load map
+     */
     @Test
     @DisplayName("Testing loading a map")
     public void testLoadMap() {
@@ -38,14 +47,20 @@ public class TestMapEditor {
         assertEquals(51, l_Map.getD_Countries().get(1).getD_Neighbours().get(1).getD_CountryIntID());
     }
 
+    /**
+     * test validation of a map
+     */
     @Test
     @DisplayName("Testing map validator")
     public void testValidateMap() {
         Map l_Map = d_MapEditor.getD_LoadedMap();
-        boolean l_Test = d_MapEditor.validateMap(l_Map);
+        boolean l_Test = d_MapEditor.validateMapDomination(l_Map);
         assertEquals(true, l_Test);
     }
 
+    /**
+     * test if map is connected graph
+     */
     @Test
     public void testValidateMap_isConnected() {
         Map p_Map = d_MapEditor.getD_LoadedMap();
@@ -57,6 +72,9 @@ public class TestMapEditor {
 
     }
 
+    /**
+     * test if all continents have a country each
+     */
     @Test
     public void testValidateMap_allContinentHasCountry() {
         Map p_Map = d_MapEditor.getD_LoadedMap();
@@ -76,6 +94,9 @@ public class TestMapEditor {
 
     }
 
+    /**
+     * test if all countries have a continent
+     */
     @Test
     public void testValidateMap_allCountryHasContinent() {
         Map p_Map = d_MapEditor.getD_LoadedMap();
@@ -97,7 +118,9 @@ public class TestMapEditor {
         assert l_HasContinent == true;
     }
 
-    
+    /**
+     * test if map has connected sub-graph
+     */
     @Test
     public void testValidateMap_hasConnectedSubGraphs(){
         Map l_Map = d_MapEditor.getD_LoadedMap();
@@ -116,6 +139,25 @@ public class TestMapEditor {
             assert l_ConnectedSubGraph == true;
     }
 
+    /**
+     * test if map is invalid
+     */
+    @Test
+    @DisplayName("Testing invalid map")
+    public void testInvalidMap() {
+        try {
+            d_MapEditor.loadMapDomination("invalidmap.map");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Map l_Map = d_MapEditor.getD_LoadedMap();
+        boolean l_Test = d_MapEditor.validateMapDomination(l_Map);
+        assertEquals(false, l_Test);
+    }
+
+    /**
+     * tear down after all test run
+     */
     @AfterClass
     public static void tearDown() {
         d_MapEditor = null;

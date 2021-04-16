@@ -2,6 +2,7 @@ package team14.warzone.GameEngine.Commands;
 
 import team14.warzone.GameEngine.GameEngine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author Anagh
  * @version 1.0
  */
-public class AdminCommands implements ICommand {
+public class AdminCommands implements ICommand, Serializable {
     /**
      * field stores keyword for the command
      */
@@ -32,6 +33,7 @@ public class AdminCommands implements ICommand {
     public static ArrayList<String> VALID_ADMIN_COMMANDS = new ArrayList<>(
             Arrays.asList(
                     "showmap",
+                    "showcards",
                     "exit",
                     "editcontinent",
                     "editcountry",
@@ -42,7 +44,10 @@ public class AdminCommands implements ICommand {
                     "loadmap",
                     "showmap",
                     "gameplayer",
-                    "assigncountries"
+                    "assigncountries",
+                    "tournament",
+                    "savegame",
+                    "loadgame"
             )
     );
 
@@ -57,6 +62,13 @@ public class AdminCommands implements ICommand {
         this.d_Option = p_Options;
     }
 
+    /**
+     * AdminCommands constructor
+     *
+     * @param p_Keyword Keyword param
+     * @param p_Options Options param
+     * @param p_GE      GameEngine param
+     */
     public AdminCommands(String p_Keyword, Option p_Options, GameEngine p_GE) {
         this.d_Keyword = p_Keyword;
         this.d_Option = p_Options;
@@ -74,31 +86,39 @@ public class AdminCommands implements ICommand {
         switch (this.getD_Keyword()) {
             case "editcontinent":
                 if (l_OptionName.equals("-add"))
-                    d_GameEngine.getD_CurrentPhase().addContinent(l_CommandArgs.get(0),
+                    d_GameEngine.getD_CurrentPhase().addContinent(reformatName(l_CommandArgs.get(0)),
                             Integer.parseInt(l_CommandArgs.get(1)));
                 else //-remove option
-                    d_GameEngine.getD_CurrentPhase().removeContinent(l_CommandArgs.get(0));
+                    d_GameEngine.getD_CurrentPhase().removeContinent(reformatName(l_CommandArgs.get(0)));
                 break;
 
             case "editcountry":
                 if (l_OptionName.equals("-add"))
-                    d_GameEngine.getD_CurrentPhase().addCountry(l_CommandArgs.get(0),
-                            l_CommandArgs.get(1));
+                    d_GameEngine.getD_CurrentPhase().addCountry(reformatName(l_CommandArgs.get(0)),
+                            reformatName(l_CommandArgs.get(1)));
                 else //-remove option
-                    d_GameEngine.getD_CurrentPhase().removeCountry(l_CommandArgs.get(0));
+                    d_GameEngine.getD_CurrentPhase().removeCountry(reformatName(l_CommandArgs.get(0)));
                 break;
 
             case "editneighbor":
                 if (l_OptionName.equals("-add"))
-                    d_GameEngine.getD_CurrentPhase().addNeighbor(l_CommandArgs.get(0),
-                            l_CommandArgs.get(1));
+                    d_GameEngine.getD_CurrentPhase().addNeighbor(reformatName(l_CommandArgs.get(0)),
+                            reformatName(l_CommandArgs.get(1)));
                 else //-remove option
-                    d_GameEngine.getD_CurrentPhase().removeNeighbor(l_CommandArgs.get(0),
-                            l_CommandArgs.get(1));
+                    d_GameEngine.getD_CurrentPhase().removeNeighbor(reformatName(l_CommandArgs.get(0)),
+                            reformatName(l_CommandArgs.get(1)));
                 break;
 
             case "savemap":
-                d_GameEngine.getD_CurrentPhase().saveMap(l_CommandArgs.get(0));
+                d_GameEngine.getD_CurrentPhase().saveMap(l_CommandArgs.get(0), l_CommandArgs.get(1));
+                break;
+
+            case "savegame":
+                d_GameEngine.getD_CurrentPhase().saveGame(l_CommandArgs.get(0));
+                break;
+
+            case "loadgame":
+                d_GameEngine.loadGame(l_CommandArgs.get(0));
                 break;
 
             case "editmap":
@@ -117,15 +137,31 @@ public class AdminCommands implements ICommand {
                 d_GameEngine.getD_CurrentPhase().showMap();
                 break;
 
+            case "showcards":
+                d_GameEngine.getD_CurrentPhase().showCards();
+                break;
+
             case "gameplayer":
                 if (l_OptionName.equals("-add"))
-                    d_GameEngine.getD_CurrentPhase().addPlayer(l_CommandArgs.get(0));
+                    d_GameEngine.getD_CurrentPhase().addPlayer(l_CommandArgs.get(0), l_CommandArgs.get(1));
                 else //-remove option
                     d_GameEngine.getD_CurrentPhase().removePlayer(l_CommandArgs.get(0));
                 break;
 
             case "assigncountries":
                 d_GameEngine.getD_CurrentPhase().assignCountries();
+                break;
+
+            case "tournament":
+                d_GameEngine.setD_CurrentPhase(d_GameEngine.getD_TournamentModePhase());
+                if (l_OptionName.equals("-M") || l_OptionName.equals("-m"))
+                    d_GameEngine.getD_CurrentPhase().tournamentAddMaps(l_CommandArgs);
+                else if (l_OptionName.equals("-P") || l_OptionName.equals("-p"))
+                    d_GameEngine.getD_CurrentPhase().tournamentAddPlayersStrategies(l_CommandArgs);
+                else if (l_OptionName.equals("-G") || l_OptionName.equals("-g"))
+                    d_GameEngine.getD_CurrentPhase().tournamentNumOfGames(l_CommandArgs.get(0));
+                else if (l_OptionName.equals("-D") || l_OptionName.equals("-d"))
+                    d_GameEngine.getD_CurrentPhase().tournamentMaxNumOfTurns(l_CommandArgs.get(0));
                 break;
         }
     }
@@ -175,6 +211,15 @@ public class AdminCommands implements ICommand {
         this.d_Option = p_Option;
     }
 
+    /**
+     * A method replace "_" with space in country and continent name
+     *
+     * @param p_Name name of format
+     * @return reformatted name
+     */
+    public String reformatName(String p_Name) {
+        return p_Name.replace('_', ' ');
+    }
 
     /**
      * @return String

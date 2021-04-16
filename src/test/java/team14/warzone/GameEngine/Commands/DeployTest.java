@@ -6,8 +6,12 @@ import org.junit.jupiter.api.DisplayName;
 import team14.warzone.Console.Console;
 import team14.warzone.Console.InputValidator;
 import team14.warzone.GameEngine.GameEngine;
-import team14.warzone.MapModule.MapEditor;
+import team14.warzone.MapModule.AdapterMapEditor;
+import team14.warzone.MapModule.MapEditorConquest;
 
+/**
+ * This class tests the deploy order
+ */
 public class DeployTest {
     /**
      * console field
@@ -16,7 +20,7 @@ public class DeployTest {
     /**
      * map editor field
      */
-    private MapEditor d_MapEditor;
+    private AdapterMapEditor d_MapEditor;
     /**
      * game engine field
      */
@@ -30,15 +34,15 @@ public class DeployTest {
     public void setup() {
         // object instantiation
         d_Console = new Console();
-        d_MapEditor = new MapEditor();
+        d_MapEditor = new AdapterMapEditor(new MapEditorConquest());
         d_GE = new GameEngine(d_Console, d_MapEditor);
 
         // setting up the scenario
-        d_GE.loadMap("bigeurope.map");
+        d_GE.getD_CurrentPhase().loadMap("bigeurope.map");
         InputValidator.CURRENT_PHASE = InputValidator.Phase.STARTUP;
-        d_GE.addPlayer("p1");
-        d_GE.addPlayer("p2");
-        d_GE.assignCountries();
+        d_GE.getD_CurrentPhase().addPlayer("p1", "human");
+        d_GE.getD_CurrentPhase().addPlayer("p2", "human");
+        d_GE.getD_CurrentPhase().assignCountries();
         InputValidator.CURRENT_PHASE = InputValidator.Phase.GAMEPLAY;
         d_GE.setD_CurrentPlayer(d_GE.getD_PlayerList().get(0)); // p1 turn
     }
